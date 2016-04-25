@@ -6,9 +6,12 @@
 #define Solenoid1 8
 #define Solenoid2 9
 
-#define LED 13
+#define LED1 11
+#define LED2 12
+#define LED3 13
 
 #define HallOnOff 100
+#define troubleshootDelay 3000
 
 int Status_HallSensor1 = 0;
 int Status_HallSensor2 = 0;
@@ -16,7 +19,7 @@ int Status_HallSensor3 = 0;
 int Status_HallSensorLock = 0;
 
 enum State {
-  initialized,
+  start,
   letter1,
   letter2,
   opened
@@ -24,26 +27,32 @@ enum State {
 
 State currentState;
 
-
 int checkHallSensor(int sensorNum);
-void openBox();
-void closeBox();
+void toggleSolenoid();
+void flashLED10();
 
 void setup() {
-  // put your setup code here, to run once:
+  Serial.begin(9600);
+  Serial.println("Geocache initializing...");
+  
   pinMode(Solenoid1, OUTPUT);
-  pinMode(Solenoid2, OUTPUT);
+  pinMode(Solenoid2, OUTPUT); 
+  pinMode(LED1, OUTPUT);
+  pinMode(LED2, OUTPUT);
+  pinMode(LED3, OUTPUT);
 
   digitalWrite(Solenoid1, LOW);
   digitalWrite(Solenoid2, LOW);
+  digitalWrite(LED1, LOW);
+  digitalWrite(LED2, LOW);
+  digitalWrite(LED3, LOW);
 
-  Serial.begin(9600);
-  Serial.println("Geocache running...");
+  currentState = start;
 
-  digitalWrite(LED, LOW);
-
-  currentState = initialized;
-
+  Serial.print("Geocache opening for 10 seconds...");
+  toggleSolenoid();
+  Serial.println("LOCKED");
+  Serial.println("Geocache now running...");
 }
 
 void loop() {
@@ -51,33 +60,37 @@ void loop() {
   
   Serial.print("HallSensor1 Status: ");
   Status_HallSensor1 = checkHallSensor(HallSensor1);
-  if (Status_HallSensor1 == 1 && currentState == initialized) {
+  if (Status_HallSensor1 == 1 && currentState == start) {
     currentState = letter1;
+    digitalWrite(LED1, HIGH);
    }
 
   Serial.print("HallSensor2 Status: ");
   Status_HallSensor2 = checkHallSensor(HallSensor2);
   if (Status_HallSensor2 == 1 && currentState == letter1) {
     currentState = letter2;
+    digitalWrite(LED2, HIGH);
    }
 
   Serial.print("HallSensor3 Status: ");
   Status_HallSensor3 = checkHallSensor(HallSensor3);
   if (Status_HallSensor3 == 1 && currentState == letter2) {
     currentState = opened;
-    openBox();
+    digitalWrite(LED3, HIGH);
+    toggleSolenoid();
    }
 
   Serial.print("HallSensorLock Status: ");
   Status_HallSensorLock = checkHallSensor(HallSensorLock);
   if (Status_HallSensorLock == 1 && currentState == opened) {
-    currentState = initialized;
-    closeBox();
+    currentState = start;
+    toggleSolenoid();
    }
+
 
   Serial.print("Current State: ");
   Serial.println(currentState);
-  delay(3000);
+  delay(troubleshootDelay);
 }
 
 
@@ -94,21 +107,33 @@ int checkHallSensor(int sensorNum) {
 }
 
 
-void openBox() {
-  digitalWrite(LED, HIGH);
+void toggleSolenoid() {
   digitalWrite(Solenoid1, HIGH);
   digitalWrite(Solenoid2, HIGH);
-  delay(5000);
+  flashLED10();
   digitalWrite(Solenoid1, LOW);
   digitalWrite(Solenoid2, LOW);
 }
 
-void closeBox() {
-  digitalWrite(LED, LOW);
-  digitalWrite(Solenoid1, HIGH);
-  digitalWrite(Solenoid2, HIGH);
-  delay(5000);
-  digitalWrite(Solenoid1, LOW);
-  digitalWrite(Solenoid2, LOW);
+
+void flashLED10() {
+  for (int x=0; x<4; x++) {
+    digitalWrite(LED1, HIGH);
+    digitalWrite(LED2, HIGH);
+    digitalWrite(LED3, HIGH);
+    delay(1500);
+    digitalWrite(LED1, LOW);
+    digitalWrite(LED2, LOW);
+    digitalWrite(LED3, LOW);
+    delay(1500);
+  }
+  
+  digitalWrite(LED1, HIGH);
+  digitalWrite(LED2, HIGH);
+  digitalWrite(LED3, HIGH);
+  delay(3000);
+  digitalWrite(LED1, LOW);
+  digitalWrite(LED2, LOW);
+  digitalWrite(LED3, LOW);
 }
 
