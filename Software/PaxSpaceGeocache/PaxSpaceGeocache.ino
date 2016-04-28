@@ -45,7 +45,7 @@ Servo Servo2;
 int checkHallSensor(int sensorNum);
 void openBox();
 void closeBox();
-void flashLED10();
+void flashLED();
 
 
 
@@ -160,7 +160,7 @@ void openBox() {
   Servo2.attach(Servo2_pin);
   Servo1.write(Servo1_openPos);
   Servo2.write(Servo2_openPos);
-  flashLED10();
+  flashLED();
   Servo1.detach();
   Servo2.detach();
 }
@@ -176,7 +176,7 @@ void openBox() {
 void closeBox() {
   Servo1.attach(Servo1_pin);
   Servo2.attach(Servo2_pin);
-  flashLED10();
+  flashLED();
   Servo1.write(Servo1_closePos);
   Servo2.write(Servo2_closePos);
   Servo1.detach();
@@ -192,7 +192,7 @@ void closeBox() {
 //
 //
 //**********************************
-void flashLED10() {
+void flashLED() {
   for (int x=0; x<4; x++) {
     digitalWrite(LED1, HIGH);
     digitalWrite(LED2, HIGH);
