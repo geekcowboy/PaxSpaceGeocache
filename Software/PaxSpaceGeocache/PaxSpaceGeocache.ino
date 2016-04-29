@@ -19,10 +19,10 @@
 
 #define HallOnOff 100
 #define TroubleshootDelay 3000
-#define Servo1_openPos 0
+#define Servo1_openPos 90
 #define Servo2_openPos 90
-#define Servo1_closePos 90
-#define Servo2_closePos 0
+#define Servo1_closePos 0
+#define Servo2_closePos 180
 
 int Status_HallSensor1 = 0;
 int Status_HallSensor2 = 0;
@@ -73,8 +73,6 @@ void setup() {
   Serial.print("Geocache opening for 10 seconds...");
   openBox();
   closeBox();
-  Servo1.detach();
-  Servo2.detach();
   Serial.println("LOCKED");
   Serial.println("Geocache now running...");
 }
@@ -156,13 +154,9 @@ int checkHallSensor(int sensorNum) {
 //
 //**********************************
 void openBox() {
-  Servo1.attach(Servo1_pin);
-  Servo2.attach(Servo2_pin);
   Servo1.write(Servo1_openPos);
   Servo2.write(Servo2_openPos);
   flashLED();
-  Servo1.detach();
-  Servo2.detach();
 }
 
 
@@ -174,13 +168,9 @@ void openBox() {
 //
 //**********************************
 void closeBox() {
-  Servo1.attach(Servo1_pin);
-  Servo2.attach(Servo2_pin);
   flashLED();
   Servo1.write(Servo1_closePos);
   Servo2.write(Servo2_closePos);
-  Servo1.detach();
-  Servo2.detach();
 }
 
 
