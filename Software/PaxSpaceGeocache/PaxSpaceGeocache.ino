@@ -20,9 +20,9 @@
 #define HallOnOff 100
 #define TroubleshootDelay 3000
 #define Servo1_openPos 90
-#define Servo2_openPos 90
-#define Servo1_closePos 0
-#define Servo2_closePos 180
+#define Servo2_openPos 180
+#define Servo1_closePos 180
+#define Servo2_closePos 90
 
 int Status_HallSensor1 = 0;
 int Status_HallSensor2 = 0;
@@ -155,6 +155,7 @@ int checkHallSensor(int sensorNum) {
 //**********************************
 void openBox() {
   Servo1.write(Servo1_openPos);
+  delay(100);
   Servo2.write(Servo2_openPos);
   flashLED();
 }
@@ -170,6 +171,7 @@ void openBox() {
 void closeBox() {
   flashLED();
   Servo1.write(Servo1_closePos);
+  delay(100);
   Servo2.write(Servo2_closePos);
 }
 
